@@ -57,24 +57,22 @@ goto MENU
 
 :DESINSTALAR
 cls
-echo ¿Deseas desinstalar algún programa? (S/N)
-set /p resp=
-if /I "%resp%"=="S" (
-    powershell -Command "Get-WmiObject -Class Win32_Product | Select-Object Name"
-    echo ============================================
-    set /p programa=Escribe el nombre EXACTO del programa a eliminar:
-    echo ¿Eliminar también sus registros? (S/N)
-    set /p eliminarReg=
-    powershell -Command "Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -eq '%programa%' } | ForEach-Object { $_.Uninstall() }"
-    if /I "%eliminarReg%"=="S" (
-        reg export HKLM\Software\%programa% "%userprofile%\Desktop\Backup_%programa%.reg"
-        powershell -Command "Remove-Item -Path 'HKLM:\Software\%programa%' -Recurse -Force -ErrorAction SilentlyContinue"
-        powershell -Command "Remove-Item -Path 'HKCU:\Software\%programa%' -Recurse -Force -ErrorAction SilentlyContinue"
-    )
-    echo Desinstalación completada.
-) else (
-    echo Saltando desinstalación...
+echo ============================================
+echo     PROGRAMAS INSTALADOS EN TU EQUIPO
+echo ============================================
+echo Se abrirá una ventana con la lista completa.
+powershell -Command "Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*,HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*,HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object { $_.DisplayName } | Select-Object DisplayName | Out-File -FilePath '%temp%\ProgramasInstalados.txt'"
+start notepad "%temp%\ProgramasInstalados.txt"
+echo ============================================
+echo Copia el nombre EXACTO del programa que deseas eliminar.
+set /p programa=Nombre exacto del programa a desinstalar:
+if "%programa%"=="" (
+    echo No se proporcionó un nombre válido. Cancelando desinstalación.
+    pause
+    goto MENU
 )
+echo Ejecutando desinstalación...
+powershell -Command "$app = Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*,HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*,HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object { $_.DisplayName -eq '%programa%' }; if ($app.UninstallString) { Start-Process -FilePath $app.UninstallString -Verb RunAs } else { Write-Host 'No se encontró comando de desinstalación.' }"
 pause
 goto MENU
 
