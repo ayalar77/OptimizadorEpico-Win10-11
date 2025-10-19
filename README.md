@@ -4,6 +4,7 @@ Una herramienta interactiva y poderosa para limpiar, optimizar y desinstalar pro
 
 Una herramienta interactiva y poderosa para limpiar, optimizar y desinstalar programas en Windows 10 y 11. Diseñada por Raul para técnicos, usuarios avanzados y familias que quieren mantener sus equipos al máximo rendimiento.
 
+Versión 1.6 - Mejora en desinstalación con PowerShell y lista completa de programas
 ## 🚀 Características
 
 - Limpieza profunda de archivos temporales, caché, logs y prefetch
